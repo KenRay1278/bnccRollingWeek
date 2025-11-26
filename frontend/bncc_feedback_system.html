@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BNCC Internal Event Feedback System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            color: #007bff;
+            border-bottom-color: #007bff;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .rating-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .rating-group input[type="radio"] {
+            width: auto;
+        }
+
+        .rating-group label {
+            font-weight: normal;
+            display: inline;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .btn-delete {
+            background-color: #dc3545;
+        }
+
+        .btn-delete:hover {
+            background-color: #c82333;
+        }
+
+        .btn-edit {
+            background-color: #ffc107;
+        }
+
+        .btn-edit:hover {
+            background-color: #e0a800;
+        }
+
+        .filter-section {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-section input,
+        .filter-section select {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .feedback-list {
+            margin-top: 20px;
+        }
+
+        .feedback-item {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            background: #fafafa;
+        }
+
+        .feedback-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .feedback-info {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .status-open {
+            background-color: #ffc107;
+            color: #000;
+        }
+
+        .status-in-review {
+            background-color: #17a2b8;
+            color: white;
+        }
+
+        .status-resolved {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .feedback-actions {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .feedback-actions button {
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .success-message {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .success-message.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>BNCC Internal Event Feedback System</h1>
+        <p class="subtitle">Memberikan feedback untuk meningkatkan kualitas acara internal BNCC</p>
+
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('feedback-form')">Feedback Form</button>
+            <button class="tab" onclick="switchTab('admin-panel')">Admin Panel</button>
+        </div>
+
+        <!-- Feedback Form -->
+        <div id="feedback-form" class="tab-content active">
+            <div id="success-message" class="success-message">Feedback berhasil dikirim!</div>
+            <form id="feedbackForm">
+                <div class="form-group">
+                    <label for="name">Nama *</label>
+                    <input type="text" id="name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email *</label>
+                    <input type="email" id="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="eventName">Nama Event *</label>
+                    <input type="text" id="eventName" placeholder="Contoh: Workshop React.js" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="division">Divisi *</label>
+                    <select id="division" required>
+                        <option value="">Pilih Divisi</option>
+                        <option value="LnT">LnT (Learning & Training)</option>
+                        <option value="EEO">EEO (External Event Organizer)</option>
+                        <option value="PR">PR (Public Relations)</option>
+                        <option value="HRD">HRD (Human Resource Development)</option>
+                        <option value="RnD">RnD (Research & Development)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Rating (1-5) *</label>
+                    <div class="rating-group">
+                        <input type="radio" id="rating1" name="rating" value="1" required>
+                        <label for="rating1">1</label>
+                        <input type="radio" id="rating2" name="rating" value="2">
+                        <label for="rating2">2</label>
+                        <input type="radio" id="rating3" name="rating" value="3">
+                        <label for="rating3">3</label>
+                        <input type="radio" id="rating4" name="rating" value="4">
+                        <label for="rating4">4</label>
+                        <input type="radio" id="rating5" name="rating" value="5">
+                        <label for="rating5">5</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="comment">Komentar</label>
+                    <textarea id="comment" placeholder="Bagikan pengalaman Anda..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="suggestion">Saran</label>
+                    <textarea id="suggestion" placeholder="Apa yang bisa kami tingkatkan?"></textarea>
+                </div>
+
+                <button type="submit">Kirim Feedback</button>
+            </form>
+        </div>
+
+        <!-- Admin Panel -->
+        <div id="admin-panel" class="tab-content">
+            <div class="filter-section">
+                <input type="text" id="searchInput" placeholder="Cari nama atau event...">
+                <select id="filterStatus">
+                    <option value="">Semua Status</option>
+                    <option value="open">Open</option>
+                    <option value="in-review">In Review</option>
+                    <option value="resolved">Resolved</option>
+                </select>
+                <select id="filterDivision">
+                    <option value="">Semua Divisi</option>
+                    <option value="LnT">LnT</option>
+                    <option value="EEO">EEO</option>
+                    <option value="PR">PR</option>
+                    <option value="HRD">HRD</option>
+                    <option value="RnD">RnD</option>
+                </select>
+            </div>
+
+            <div id="feedbackList" class="feedback-list"></div>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Feedback</h2>
+                <button class="close-modal" onclick="closeEditModal()">&times;</button>
+            </div>
+            <form id="editForm">
+                <input type="hidden" id="editId">
+                
+                <div class="form-group">
+                    <label for="editEventName">Nama Event *</label>
+                    <input type="text" id="editEventName" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="editDivision">Divisi *</label>
+                    <select id="editDivision" required>
+                        <option value="LnT">LnT</option>
+                        <option value="EEO">EEO</option>
+                        <option value="PR">PR</option>
+                        <option value="HRD">HRD</option>
+                        <option value="RnD">RnD</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Rating (1-5) *</label>
+                    <div class="rating-group">
+                        <input type="radio" id="editRating1" name="editRating" value="1" required>
+                        <label for="editRating1">1</label>
+                        <input type="radio" id="editRating2" name="editRating" value="2">
+                        <label for="editRating2">2</label>
+                        <input type="radio" id="editRating3" name="editRating" value="3">
+                        <label for="editRating3">3</label>
+                        <input type="radio" id="editRating4" name="editRating" value="4">
+                        <label for="editRating4">4</label>
+                        <input type="radio" id="editRating5" name="editRating" value="5">
+                        <label for="editRating5">5</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="editStatus">Status *</label>
+                    <select id="editStatus" required>
+                        <option value="open">Open</option>
+                        <option value="in-review">In Review</option>
+                        <option value="resolved">Resolved</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="editComment">Komentar</label>
+                    <textarea id="editComment"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="editSuggestion">Saran</label>
+                    <textarea id="editSuggestion"></textarea>
+                </div>
+
+                <button type="submit">Simpan Perubahan</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // --- CONFIGURATION ---
+        // This URL must match where your node server is running.
+        // If your terminal says "Server running at port 3000", this is correct.
+        const API_URL = 'http://localhost:3000/api/feedback';
+        
+        let feedbacks = [];
+
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            getFeedbacks(); // Load data from backend when page opens
+        });
+
+        // --- 1. READ (GET) ---
+        async function getFeedbacks() {
+            try {
+                const response = await fetch(API_URL);
+                if (!response.ok) throw new Error('Failed to connect to backend');
+                feedbacks = await response.json();
+                renderFeedbackList();
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                // Optional: Show a user-friendly error on the screen
+                document.getElementById('feedbackList').innerHTML = 
+                    '<p style="color:red">Gagal mengambil data. Pastikan server backend sudah berjalan (node server.js).</p>';
+            }
+        }
+
+        // --- 2. CREATE (POST) ---
+        document.getElementById('feedbackForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const feedback = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                eventName: document.getElementById('eventName').value,
+                division: document.getElementById('division').value,
+                rating: parseInt(document.querySelector('input[name="rating"]:checked').value),
+                comment: document.getElementById('comment').value,
+                suggestion: document.getElementById('suggestion').value,
+                status: 'open' // Default status
+            };
+            
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(feedback)
+                });
+
+                if (response.ok) {
+                    // UI Success Handling
+                    const successMsg = document.getElementById('success-message');
+                    successMsg.classList.add('active');
+                    setTimeout(() => successMsg.classList.remove('active'), 3000);
+                    
+                    this.reset();
+                    getFeedbacks(); // Refresh the list from the server
+                }
+            } catch (error) {
+                alert('Error: Gagal mengirim feedback ke server.');
+            }
+        });
+
+        // --- 3. DELETE ---
+        async function deleteFeedback(id) {
+            if (confirm('Apakah Anda yakin ingin menghapus feedback ini?')) {
+                try {
+                    await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+                    getFeedbacks(); // Refresh data
+                } catch (error) {
+                    alert('Gagal menghapus data.');
+                }
+            }
+        }
+
+        // --- 4. UPDATE (PUT) ---
+        document.getElementById('editForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const id = document.getElementById('editId').value;
+            
+            const updatedData = {
+                eventName: document.getElementById('editEventName').value,
+                division: document.getElementById('editDivision').value,
+                rating: parseInt(document.querySelector('input[name="editRating"]:checked').value),
+                status: document.getElementById('editStatus').value,
+                comment: document.getElementById('editComment').value,
+                suggestion: document.getElementById('editSuggestion').value
+            };
+            
+            try {
+                await fetch(`${API_URL}/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(updatedData)
+                });
+                
+                closeEditModal();
+                getFeedbacks(); // Refresh data
+            } catch (error) {
+                alert('Gagal mengupdate data.');
+            }
+        });
+
+        // --- UI HELPER FUNCTIONS (UNCHANGED LOGIC) ---
+        
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+            
+            if (tabId === 'admin-panel') {
+                getFeedbacks(); // Ensure data is fresh when switching to admin
+            }
+        }
+
+        function renderFeedbackList() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const filterStatus = document.getElementById('filterStatus').value;
+            const filterDivision = document.getElementById('filterDivision').value;
+            
+            let filtered = feedbacks.filter(f => {
+                const matchSearch = f.name.toLowerCase().includes(searchTerm) || 
+                                f.eventName.toLowerCase().includes(searchTerm);
+                const matchStatus = !filterStatus || f.status === filterStatus;
+                const matchDivision = !filterDivision || f.division === filterDivision;
+                return matchSearch && matchStatus && matchDivision;
+            });
+            
+            const listContainer = document.getElementById('feedbackList');
+            
+            if (filtered.length === 0) {
+                listContainer.innerHTML = '<p>Tidak ada feedback yang ditemukan.</p>';
+                return;
+            }
+            
+            listContainer.innerHTML = filtered.map(f => `
+                <div class="feedback-item">
+                    <div class="feedback-header">
+                        <div>
+                            <h3>${f.name} - ${f.eventName}</h3>
+                            <div class="feedback-info">
+                                ${f.email} | ${f.division} | Rating: ${f.rating}/5 | ${new Date(f.createdAt).toLocaleDateString('id-ID')}
+                            </div>
+                        </div>
+                        <span class="status-badge status-${f.status}">${f.status}</span>
+                    </div>
+                    ${f.comment ? `<p><strong>Komentar:</strong> ${f.comment}</p>` : ''}
+                    ${f.suggestion ? `<p><strong>Saran:</strong> ${f.suggestion}</p>` : ''}
+                    <div class="feedback-actions">
+                        <button class="btn-edit" onclick="openEditModal('${f.id}')">Edit</button>
+                        <button class="btn-delete" onclick="deleteFeedback('${f.id}')">Hapus</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openEditModal(id) {
+            const feedback = feedbacks.find(f => f.id === id);
+            if (!feedback) return;
+            
+            document.getElementById('editId').value = feedback.id;
+            document.getElementById('editEventName').value = feedback.eventName;
+            document.getElementById('editDivision').value = feedback.division;
+            document.querySelector(`input[name="editRating"][value="${feedback.rating}"]`).checked = true;
+            document.getElementById('editStatus').value = feedback.status;
+            document.getElementById('editComment').value = feedback.comment;
+            document.getElementById('editSuggestion').value = feedback.suggestion;
+            
+            document.getElementById('editModal').classList.add('active');
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').classList.remove('active');
+        }
+
+        // --- EVENT LISTENERS ---
+        document.getElementById('searchInput').addEventListener('input', renderFeedbackList);
+        document.getElementById('filterStatus').addEventListener('change', renderFeedbackList);
+        document.getElementById('filterDivision').addEventListener('change', renderFeedbackList);
+        
+        document.getElementById('editModal').addEventListener('click', function(e) {
+            if (e.target === this) closeEditModal();
+        });
+    </script>
+</body>
+</html>
