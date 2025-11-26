@@ -27,7 +27,7 @@ A full-stack simple web application designed to collect, manage, and track feedb
 ```text
 root/
 │
-├── backend/                      # Backend Server Logic
+├── server/                      # Backend Server Logic
 │   ├── src/
 │   │   ├── controllers/          # Logic for handling requests
 │   │   ├── data/                 # JSON file storage (database)
@@ -35,7 +35,7 @@ root/
 │   │   └── index.js              # Entry point (Server setup)
 │   └── package.json              # Backend dependencies
 │
-└── frontend/
+└── client/
     ├── bncc_feedback_system.html # Main Frontend Interface
     ├── style.css                 # Frontend Styles
     └── script.js                 # Frontend Logic & API calls
