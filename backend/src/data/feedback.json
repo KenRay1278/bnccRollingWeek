@@ -3,24 +3,36 @@
     "id": 1764070839175,
     "name": "Kenneth Raymond",
     "email": "kenneth.raymond@binus.ac.com",
-    "eventName": "Workshop UI",
+    "eventName": "RnD Rolling Week",
     "division": "RnD",
     "rating": 5,
     "comment": "Very good!",
-    "suggestion": "Add more examples",
+    "suggestion": "Add easier tasks",
     "createdAt": "2025-11-25T11:40:39.175Z",
-    "status": "open"
+    "status": "resolved"
   },
   {
-    "id": 1764179712277,
-    "name": "John Doe",
-    "email": "johndoe@bncc",
-    "eventName": "testvent",
-    "division": "LnT",
+    "id": 1764183173468,
+    "name": "Michael Valentinus Rustam",
+    "email": "michael.rustam@binus.ac.com",
+    "eventName": "RnD Rolling Week",
+    "division": "EEO",
     "rating": 5,
-    "comment": "nice",
-    "suggestion": "nice",
+    "comment": "keren bisa belajar webdev",
+    "suggestion": "dipanjangin dikit waktunya",
+    "status": "in-review",
+    "createdAt": "2025-11-26T18:52:53.468Z"
+  },
+  {
+    "id": 1764183331236,
+    "name": "Ethan Christian Theron",
+    "email": "ethan.theron@binus.ac.com",
+    "eventName": "SELCAVIS",
+    "division": "RnD",
+    "rating": 5,
+    "comment": "asik",
+    "suggestion": "dilamain lagi eventnya",
     "status": "open",
-    "createdAt": "2025-11-26T17:55:12.277Z"
+    "createdAt": "2025-11-26T18:55:31.236Z"
   }
 ]
