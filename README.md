@@ -13,8 +13,8 @@ A full-stack simple web application designed to collect, manage, and track feedb
 
 ### Frontend
 * **HTML:** Structure and layout.
-* **CSS:** Custom styling (separated in `style.css`).
-* **Vanilla JavaScript:** Client-side logic, DOM manipulation, and API fetching (separated in `script.js`).
+* **CSS:** Custom styling (in `style.css`).
+* **Vanilla JavaScript:** Client-side logic, DOM manipulation, and API fetching (in `script.js`).
 
 ### Backend
 * **Node.js:** Runtime environment.
@@ -101,4 +101,4 @@ The backend runs on `http://localhost:3000/api/feedback`.
 
 ## 📝 License
 
-This project was created for the Rolling Week Quest.
+This project was created for Bina Nusantara Computer Club's Rolling Week Quest.
